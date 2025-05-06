@@ -19,48 +19,63 @@ def create_booking():
     print("Headers:", request.headers)
     print("Data:", request.get_json())
     
-    # По умолчанию используем тестового пользователя с ID 1
-    current_user_id = 1
+    # Теперь дефолтное значение None вместо 1
+    current_user_id = None
     
-    # Пытаемся получить ID пользователя из JWT-токена, если он есть
+    # Пытаемся получить ID пользователя из JWT-токена
     auth_header = request.headers.get('Authorization')
     if auth_header and auth_header.startswith('Bearer '):
         try:
             from flask_jwt_extended import decode_token
             token = auth_header.split(' ')[1]
+            print(f"Получен токен для бронирования: {token}")
+            
             decoded = decode_token(token)
-            current_user_id = decoded.get('identity', 1)
-            print(f"Decoded token, user_id: {current_user_id}")
+            print(f"Декодированный токен: {decoded}")
+            
+            # Получаем identity из токена и преобразуем в число
+            identity = decoded.get('identity') or decoded.get('sub')
+            if identity:
+                # Явное преобразование в целое число, если identity - строка
+                current_user_id = int(identity) if isinstance(identity, str) else identity
+                print(f"Токен декодирован, user_id: {current_user_id}")
+            else:
+                print("Токен не содержит identity или sub")
         except Exception as e:
-            print(f"Error decoding token: {str(e)}")
-            # При ошибке декодирования токена просто используем тестового пользователя
-            pass
+            print(f"Ошибка при декодировании токена: {str(e)}")
+    else:
+        print("Заголовок Authorization не найден или не в формате Bearer")
+    
+    # Проверка наличия ID пользователя
+    if current_user_id is None:
+        return jsonify({"message": "Требуется авторизация"}), 401
     
     user = User.query.get(current_user_id)
     
     if not user:
-        return jsonify({"message": "User not found"}), 404
+        return jsonify({"message": "Пользователь не найден"}), 404
     
     data = request.get_json()
     
     required_fields = ['seat_id', 'train_id', 'passenger_name', 'passenger_document']
     for field in required_fields:
         if field not in data:
-            return jsonify({"message": f"Missing required field: {field}"}), 400
+            return jsonify({"message": f"Отсутствует обязательное поле: {field}"}), 400
     
     seat = Seat.query.get(data['seat_id'])
     if not seat:
-        return jsonify({"message": "Seat not found"}), 404
+        return jsonify({"message": "Место не найдено"}), 404
     
     if seat.status != 'free':
-        return jsonify({"message": "Seat is already booked or sold"}), 400
+        return jsonify({"message": "Место уже забронировано или продано"}), 400
     
     train = Train.query.get(data['train_id'])
     if not train:
-        return jsonify({"message": "Train not found"}), 404
+        return jsonify({"message": "Поезд не найден"}), 404
     
     price = seat.price
     
+    # Явно указываем user_id из расшифрованного токена
     new_booking = Booking(
         user_id=current_user_id,
         seat_id=data['seat_id'],
@@ -75,7 +90,7 @@ def create_booking():
     try:
         db.session.add(new_booking)
         db.session.commit()
-        print(f"Бронирование успешно создано с ID: {new_booking.id}")
+        print(f"Бронирование успешно создано с ID: {new_booking.id} для пользователя: {current_user_id}")
     except Exception as e:
         db.session.rollback()
         print(f"Ошибка при сохранении: {str(e)}")
@@ -189,39 +204,19 @@ def get_booking(booking_id):
     
     return jsonify(booking_data), 200
 
-@booking_bp.route('/<int:booking_id>/cancel', methods=['PUT'])
-def cancel_booking(booking_id):
-    # Получаем данные из JWT токена, если токен есть
-    auth_header = request.headers.get('Authorization')
-    
-    print(f"Запрос на отмену бронирования {booking_id}")
-    print(f"Заголовки: {request.headers}")
-    
-    # Для тестирования позволим отменять бронирование даже без токена
-    current_user_id = None
-    
-    if auth_header and auth_header.startswith('Bearer '):
-        try:
-            from flask_jwt_extended import decode_token
-            token = auth_header.split(' ')[1]
-            decoded = decode_token(token)
-            current_user_id = decoded.get('identity') or decoded.get('sub')
-            print(f"Токен декодирован, user_id: {current_user_id}")
-        except Exception as e:
-            print(f"Ошибка декодирования токена: {str(e)}")
+@booking_bp.route('/<int:booking_id>/debug-cancel', methods=['PUT'])
+def debug_cancel_booking(booking_id):
+    print(f"Запрос на отладочную отмену бронирования {booking_id}")
     
     booking = Booking.query.get(booking_id)
     
     if not booking:
         return jsonify({"message": "Booking not found"}), 404
     
-    # Проверяем принадлежит ли бронирование пользователю, только если ID пользователя определен
-    if current_user_id is not None and booking.user_id != current_user_id:
-        return jsonify({"message": "Unauthorized access to booking"}), 403
+    # Отладочная информация о принадлежности бронирования
+    print(f"DEBUG: booking.user_id = {booking.user_id}")
     
-    if booking.status != 'active':
-        return jsonify({"message": "Booking cannot be cancelled"}), 400
-    
+    # Отменяем бронирование без проверки принадлежности пользователю
     booking.status = 'cancelled'
     
     seat = Seat.query.get(booking.seat_id)
@@ -230,13 +225,13 @@ def cancel_booking(booking_id):
     
     try:
         db.session.commit()
-        print(f"Бронирование {booking_id} успешно отменено")
+        print(f"Бронирование {booking_id} успешно отменено в режиме отладки")
     except Exception as e:
         db.session.rollback()
         print(f"Ошибка при отмене бронирования: {str(e)}")
         return jsonify({"message": "Failed to cancel booking", "error": str(e)}), 500
     
     return jsonify({
-        "message": "Booking cancelled successfully",
+        "message": "Booking cancelled successfully (DEBUG MODE)",
         "booking": booking.to_dict()
     }), 200

@@ -33,20 +33,39 @@ const Profile = () => {
       });
     }
     
-    // Загружаем бронирования
-    fetchUserBookings();
-  }, [user]);
+    // Загружаем бронирования при первом рендеринге
+    // и при переключении на вкладку бронирований
+    if (activeTab === 'bookings') {
+      fetchUserBookings();
+    }
+  }, [user, activeTab]);
   
   const fetchUserBookings = async () => {
     try {
       setLoading(true);
       setError('');
       
-      const data = await bookingsApi.getUserBookings();
+      // Отладочная информация
+      console.log('Запрос бронирований. Токен:', localStorage.getItem('token'));
+      
+      // Важно: мы используем прямой вызов axios вместо нашего API слоя для отладки
+      const response = await fetch('http://localhost:5000/api/bookings/', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Полученные бронирования:', data);
       setBookings(data);
     } catch (err) {
       console.error('Ошибка при загрузке бронирований:', err);
-      setError('Не удалось загрузить данные о бронированиях');
+      setError(`Не удалось загрузить данные о бронированиях: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -112,16 +131,28 @@ const Profile = () => {
       setLoading(true);
       setError('');
       
-      const result = await bookingsApi.cancelBooking(bookingId);
+      // Отладочная информация
+      console.log(`Отмена бронирования ${bookingId}. Токен:`, localStorage.getItem('token'));
       
-      if (result) {
-        // Обновляем список бронирований
-        fetchUserBookings();
-        setSuccessMessage('Бронирование успешно отменено');
+      // Прямой вызов API для отмены бронирования
+      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
       }
+      
+      // Обновляем список бронирований
+      fetchUserBookings();
+      setSuccessMessage('Бронирование успешно отменено');
     } catch (err) {
       console.error('Ошибка при отмене бронирования:', err);
-      setError('Не удалось отменить бронирование');
+      setError(`Не удалось отменить бронирование: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -132,6 +163,7 @@ const Profile = () => {
     try {
       return format(parseISO(dateString), 'd MMMM yyyy', { locale: ru });
     } catch (error) {
+      console.error('Ошибка форматирования даты:', error, dateString);
       return 'Неизвестно';
     }
   };
@@ -141,8 +173,126 @@ const Profile = () => {
     try {
       return format(parseISO(dateString), 'HH:mm', { locale: ru });
     } catch (error) {
+      console.error('Ошибка форматирования времени:', error, dateString);
       return 'Неизвестно';
     }
+  };
+  
+  // Получение текстового статуса
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'active': return 'Активно';
+      case 'completed': return 'Завершено';
+      case 'cancelled': return 'Отменено';
+      default: return status;
+    }
+  };
+  
+  // Получение текстового типа места
+  const getSeatTypeText = (type) => {
+    switch (type) {
+      case 'upper': return 'Верхнее';
+      case 'lower': return 'Нижнее';
+      case 'side': return 'Боковое';
+      case 'luxury': return 'Люкс';
+      default: return 'Неизвестно';
+    }
+  };
+  
+  // Рендер элементов бронирования с проверками на null и undefined
+  const renderBooking = (booking) => {
+    if (!booking) return null;
+    
+    // Проверяем наличие необходимых свойств
+    const hasTrain = booking.train && typeof booking.train === 'object';
+    const hasSeat = booking.seat && typeof booking.seat === 'object';
+    
+    // Проверяем наличие вложенных свойств
+    const hasRouteInfo = hasTrain && booking.train.route && typeof booking.train.route === 'object';
+    const hasCarriageInfo = hasSeat && booking.seat.carriage && typeof booking.seat.carriage === 'object';
+    
+    return (
+      <div key={booking.id} className="booking-card card">
+        <div className="booking-header">
+          <div className="booking-status">
+            <span className={`status ${booking.status || 'unknown'}`}>
+              {getStatusText(booking.status)}
+            </span>
+          </div>
+          <div className="booking-date">
+            Дата бронирования: {formatDate(booking.booking_date)}
+          </div>
+        </div>
+        
+        <div className="booking-info">
+          <div className="route-info">
+            {hasTrain && (
+              <div className="train-details">
+                <span className="train-number">Поезд №{booking.train.train_number || 'Неизвестно'}</span>
+                <span className="train-type">{booking.train.train_type || 'Неизвестно'}</span>
+              </div>
+            )}
+            
+            {hasTrain && hasRouteInfo && (
+              <div className="route-direction">
+                <div className="station">
+                  <div className="time">{formatTime(booking.train.departure_time)}</div>
+                  <div className="date">{formatDate(booking.train.departure_time)}</div>
+                  <div className="city">{booking.train.route.origin || 'Неизвестно'}</div>
+                </div>
+                
+                <div className="direction-arrow">→</div>
+                
+                <div className="station">
+                  <div className="time">{formatTime(booking.train.arrival_time)}</div>
+                  <div className="date">{formatDate(booking.train.arrival_time)}</div>
+                  <div className="city">{booking.train.route.destination || 'Неизвестно'}</div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="passenger-info">
+            <div className="passenger-name">
+              <strong>Пассажир:</strong> {booking.passenger_name || 'Неизвестно'}
+            </div>
+            <div className="passenger-document">
+              <strong>Документ:</strong> {booking.passenger_document || 'Неизвестно'}
+            </div>
+          </div>
+          
+          <div className="ticket-info">
+            {hasSeat && hasCarriageInfo && (
+              <>
+                <div className="carriage-info">
+                  <strong>Вагон:</strong> {booking.seat.carriage.carriage_number || 'Неизвестно'} 
+                  ({booking.seat.carriage.carriage_type || 'Неизвестно'})
+                </div>
+                <div className="seat-info">
+                  <strong>Место:</strong> {booking.seat.seat_number || 'Неизвестно'} 
+                  ({getSeatTypeText(booking.seat.seat_type)})
+                </div>
+                <div className="price-info">
+                  <strong>Стоимость:</strong> {booking.price || (booking.seat.price && booking.seat.price.toLocaleString())} ₸
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+        
+        {booking.status === 'active' && (
+          <div className="booking-actions">
+            <button 
+              className="btn btn-secondary"
+              onClick={() => handleCancelBooking(booking.id)}
+              disabled={loading}
+            >
+              {loading ? 'Отмена...' : 'Отменить бронирование'}
+            </button>
+          </div>
+        )}
+      </div>
+    );
   };
   
   return (
@@ -171,6 +321,19 @@ const Profile = () => {
         <div className="bookings-tab">
           <h2 className="tab-title">Мои билеты</h2>
           
+          <div className="debug-info" style={{ marginBottom: '1rem', padding: '1rem', background: '#f8f9fa', border: '1px solid #ddd', borderRadius: '5px' }}>
+            <p><strong>Отладочная информация:</strong></p>
+            <p>Токен: {localStorage.getItem('token') ? 'Присутствует' : 'Отсутствует'}</p>
+            <p>ID пользователя: {user?.id || 'Неизвестно'}</p>
+            <button 
+              className="btn btn-primary" 
+              onClick={fetchUserBookings}
+              style={{ marginTop: '0.5rem' }}
+            >
+              Обновить бронирования
+            </button>
+          </div>
+          
           {loading ? (
             <div className="loader-container">
               <div className="loader"></div>
@@ -183,91 +346,13 @@ const Profile = () => {
             </div>
           ) : (
             <div className="bookings-list">
-              {bookings.map(booking => (
-                <div key={booking.id} className="booking-card card">
-                  <div className="booking-header">
-                    <div className="booking-status">
-                      {booking.status === 'active' && (
-                        <span className="status active">Активно</span>
-                      )}
-                      {booking.status === 'completed' && (
-                        <span className="status completed">Завершено</span>
-                      )}
-                      {booking.status === 'cancelled' && (
-                        <span className="status cancelled">Отменено</span>
-                      )}
-                    </div>
-                    <div className="booking-date">
-                      Дата бронирования: {formatDate(booking.booking_date)}
-                    </div>
-                  </div>
-                  
-                  <div className="booking-info">
-                    <div className="route-info">
-                      <div className="train-details">
-                        <span className="train-number">Поезд №{booking.train.train_number}</span>
-                        <span className="train-type">{booking.train.train_type}</span>
-                      </div>
-                      
-                      <div className="route-direction">
-                        <div className="station">
-                          <div className="time">{formatTime(booking.train.departure_time)}</div>
-                          <div className="date">{formatDate(booking.train.departure_time)}</div>
-                          <div className="city">{booking.train.route.origin}</div>
-                        </div>
-                        
-                        <div className="direction-arrow">→</div>
-                        
-                        <div className="station">
-                          <div className="time">{formatTime(booking.train.arrival_time)}</div>
-                          <div className="date">{formatDate(booking.train.arrival_time)}</div>
-                          <div className="city">{booking.train.route.destination}</div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="passenger-info">
-                      <div className="passenger-name">
-                        <strong>Пассажир:</strong> {booking.passenger_name}
-                      </div>
-                      <div className="passenger-document">
-                        <strong>Документ:</strong> {booking.passenger_document}
-                      </div>
-                    </div>
-                    
-                    <div className="ticket-info">
-                      <div className="carriage-info">
-                        <strong>Вагон:</strong> {booking.seat.carriage.carriage_number} 
-                        ({booking.seat.carriage.carriage_type})
-                      </div>
-                      <div className="seat-info">
-                        <strong>Место:</strong> {booking.seat.seat_number} 
-                        ({
-                          booking.seat.seat_type === 'upper' ? 'Верхнее' :
-                          booking.seat.seat_type === 'lower' ? 'Нижнее' :
-                          booking.seat.seat_type === 'side' ? 'Боковое' :
-                          booking.seat.seat_type === 'luxury' ? 'Люкс' : 'Неизвестно'
-                        })
-                      </div>
-                      <div className="price-info">
-                        <strong>Стоимость:</strong> {booking.seat.price.toLocaleString()} ₸
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {booking.status === 'active' && (
-                    <div className="booking-actions">
-                      <button 
-                        className="btn btn-secondary"
-                        onClick={() => handleCancelBooking(booking.id)}
-                        disabled={loading}
-                      >
-                        Отменить бронирование
-                      </button>
-                    </div>
-                  )}
+              {Array.isArray(bookings) ? (
+                bookings.map(booking => renderBooking(booking))
+              ) : (
+                <div className="alert alert-danger">
+                  Неверный формат данных о бронированиях. Ожидался массив, получено: {typeof bookings}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

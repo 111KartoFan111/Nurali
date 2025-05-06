@@ -9,11 +9,18 @@ const api = axios.create({
 // Добавляем перехватчик для всех запросов
 api.interceptors.request.use(
     (config) => {
-        // Исправление: Использование правильного имени ключа для токена
-        const token = localStorage.getItem('token'); // Ранее было 'access_token'
+        // Получаем токен из localStorage
+        const token = localStorage.getItem('token');
+        
+        // Если токен существует, добавляем его в заголовки
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+            // Отладочная информация
+            console.log(`Отправка запроса ${config.method} ${config.url} с токеном`);
+        } else {
+            console.warn(`Отправка запроса ${config.method} ${config.url} без токена!`);
         }
+        
         return config;
     },
     (error) => Promise.reject(error)
@@ -22,7 +29,8 @@ api.interceptors.request.use(
 // Добавляем перехватчик для всех ответов, чтобы логировать ошибки
 api.interceptors.response.use(
     (response) => {
-        // Успешный ответ
+        // Отладочная информация для успешных ответов
+        console.log(`Ответ от ${response.config.url}: `, response.status);
         return response;
     },
     (error) => {
@@ -34,6 +42,7 @@ api.interceptors.response.use(
             statusText: error.response?.statusText,
             data: error.response?.data,
             message: error.message,
+            headers: error.config?.headers, // Добавлено для отладки
             stack: error.stack
         });
         return Promise.reject(error);
@@ -90,9 +99,15 @@ export const bookingsApi = {
     createBooking: async (bookingData) => {
         try {
             console.log('Отправка данных бронирования:', bookingData);
-            console.log('Токен для бронирования:', localStorage.getItem('token'));
             
-            // Использовать axios вместо fetch
+            // Ручная проверка токена перед отправкой
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Попытка создать бронирование без токена!');
+                throw new Error('Требуется авторизация');
+            }
+            
+            // Используем настроенный экземпляр API
             const response = await api.post('/bookings/', bookingData);
             return response.data;
         } catch (error) {
@@ -102,19 +117,34 @@ export const bookingsApi = {
     },
 
     getUserBookings: async () => {
-      try {
-          console.log('Запрос на получение списка бронирований пользователя');
-          console.log('Токен для получения бронирований:', localStorage.getItem('token'));
-          
-          // Использовать axios вместо fetch
-          const response = await api.get('/bookings/');
-          return response.data;
-      } catch (error) {
-          console.error('Ошибка при получении бронирований:', error);
-          // В случае сетевой ошибки или проблем с авторизацией, возвращаем пустой массив
-          // чтобы не ломать интерфейс
-          return [];
-      }
+        try {
+            // Ручная проверка токена перед отправкой
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Попытка получить бронирования без токена!');
+                throw new Error('Требуется авторизация');
+            }
+            
+            console.log('Запрос на получение списка бронирований пользователя');
+            
+            // Используем настроенный экземпляр API
+            const response = await api.get('/bookings/');
+            
+            // Отладочная информация для анализа структуры ответа
+            console.log('Полученные бронирования:', response.data);
+            
+            // Проверяем, что ответ является массивом
+            if (!Array.isArray(response.data)) {
+                console.error('Ответ от API не является массивом:', response.data);
+                return []; // Возвращаем пустой массив для предотвращения ошибок
+            }
+            
+            return response.data;
+        } catch (error) {
+            console.error('Ошибка при получении бронирований:', error);
+            // Выбрасываем ошибку вместо возврата пустого массива для лучшей отладки
+            throw error;
+        }
     },
 
     getBookingDetails: async (bookingId) => {
@@ -130,9 +160,9 @@ export const bookingsApi = {
     cancelBooking: async (bookingId) => {
         try {
             // Печатаем токен для отладки (можно удалить в производственной версии)
-            console.log('Токен для отмены бронирования:', localStorage.getItem('token'));
+            console.log(`Отмена бронирования ${bookingId}`);
             
-            const response = await api.put(`/bookings/${bookingId}/cancel`);
+            const response = await api.put(`/bookings/${bookingId}/debug-cancel`);
             return response.data;
         } catch (error) {
             console.error('Ошибка при отмене бронирования:', error);

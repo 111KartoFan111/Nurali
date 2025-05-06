@@ -51,8 +51,8 @@ const BookingPage = () => {
         headers: {
           'Content-Type': 'application/json',
           // Если есть токен, добавляем его
-          ...(localStorage.getItem('access_token') 
-            ? { Authorization: `Bearer ${localStorage.getItem('access_token')}` } 
+          ...(localStorage.getItem('authToken')
+            ? { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
             : {})
         },
         body: JSON.stringify(bookingData)
