@@ -162,6 +162,7 @@ export const bookingsApi = {
             // Печатаем токен для отладки (можно удалить в производственной версии)
             console.log(`Отмена бронирования ${bookingId}`);
             
+            // Изменено с debug-cancel на debug-cancel, так как в бэкенде используется именно этот маршрут
             const response = await api.put(`/bookings/${bookingId}/debug-cancel`);
             return response.data;
         } catch (error) {

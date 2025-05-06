@@ -134,30 +134,21 @@ const Profile = () => {
       // Отладочная информация
       console.log(`Отмена бронирования ${bookingId}. Токен:`, localStorage.getItem('token'));
       
-      // Прямой вызов API для отмены бронирования
-      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/cancel`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Ошибка HTTP: ${response.status}`);
+      try {
+        // Используем API клиент вместо прямого fetch
+        await bookingsApi.cancelBooking(bookingId);
+        
+        // Обновляем список бронирований
+        fetchUserBookings();
+        setSuccessMessage('Бронирование успешно отменено');
+      } catch (err) {
+        console.error('Ошибка при отмене бронирования:', err);
+        setError(`Не удалось отменить бронирование: ${err.message}`);
       }
-      
-      // Обновляем список бронирований
-      fetchUserBookings();
-      setSuccessMessage('Бронирование успешно отменено');
-    } catch (err) {
-      console.error('Ошибка при отмене бронирования:', err);
-      setError(`Не удалось отменить бронирование: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
-  
   // Форматирование даты
   const formatDate = (dateString) => {
     try {
