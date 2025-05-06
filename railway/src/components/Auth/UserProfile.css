@@ -1,0 +1,43 @@
+.user-profile {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+  }
+  
+  .user-email {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .profile-form .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0;
+  }
+  
+  .profile-form .form-row .form-group {
+    flex: 1;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .profile-form .form-row {
+      flex-direction: column;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .form-actions button {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }

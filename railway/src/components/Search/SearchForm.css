@@ -1,0 +1,44 @@
+.search-form {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .search-form .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+  
+  .search-form .form-group {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .search-button-group {
+    flex: 0 0 auto;
+    min-width: auto !important;
+    align-self: flex-end;
+  }
+  
+  @media (max-width: 768px) {
+    .search-form .form-row {
+      flex-direction: column;
+    }
+    
+    .search-form .form-group {
+      width: 100%;
+    }
+    
+    .search-button-group {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    
+    .search-button-group .btn {
+      width: 100%;
+    }
+  }

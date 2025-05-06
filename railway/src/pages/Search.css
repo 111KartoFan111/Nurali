@@ -1,0 +1,270 @@
+.search-page {
+  width: 100%;
+}
+
+.search-form-container {
+  margin-bottom: 2rem;
+}
+
+.search-form {
+  padding: 1.5rem;
+}
+
+.search-form .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.search-form .form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-button-group {
+  flex: 0 0 auto;
+  min-width: auto !important;
+  align-self: flex-end;
+}
+
+/* Loader */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid var(--primary-color);
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Train Cards */
+.train-card {
+  background-color: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.train-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.train-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.train-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.train-type {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  background-color: #ecf0f1;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+}
+
+.train-route {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.departure, .arrival {
+  text-align: center;
+  flex: 1;
+}
+
+.departure .time, .arrival .time {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #34495e;
+}
+
+.departure .date, .arrival .date {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin: 0.3rem 0;
+}
+
+.departure .city, .arrival .city {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.duration {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.duration-time {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-bottom: 0.5rem;
+}
+
+.duration-line {
+  height: 2px;
+  background-color: #3498db;
+  position: relative;
+}
+
+.duration-line::before, .duration-line::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #3498db;
+  border-radius: 50%;
+  top: -4px;
+}
+
+.duration-line::before {
+  left: 0;
+}
+
+.duration-line::after {
+  right: 0;
+}
+
+.train-carriages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.carriage-option {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  flex: 1;
+  min-width: 200px;
+  transition: background-color 0.2s ease;
+}
+
+.carriage-option:hover {
+  background-color: #f1f1f1;
+}
+
+.carriage-type {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.carriage-seats {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-bottom: 0.5rem;
+}
+
+.carriage-price {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 0.5rem;
+}
+
+.select-btn {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.select-btn:hover {
+  background-color: #2980b9;
+}
+
+.search-results-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.filters-panel {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filters-panel h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  margin-bottom: 1rem;
+}
+
+.filter-label {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.trains-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}

@@ -1,0 +1,99 @@
+.profile-bookings {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .profile-bookings h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+  }
+  
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #3f51b5;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .no-bookings {
+    text-align: center;
+    padding: 40px 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  .no-bookings p {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 18px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .btn-primary {
+    background-color: #3f51b5;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #303f9f;
+  }
+  
+  .bookings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Медиа-запросы для адаптивности */
+  @media (max-width: 768px) {
+    .profile-bookings {
+      padding: 15px;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }

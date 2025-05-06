@@ -1,0 +1,147 @@
+.train-card {
+    margin-bottom: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.3s;
+  }
+  
+  .train-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .train-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.8rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .train-number {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+  }
+  
+  .train-type {
+    color: #666;
+  }
+  
+  .train-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .train-route {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .departure, .arrival {
+    flex: 1;
+  }
+  
+  .time {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  
+  .date {
+    color: #666;
+    margin-bottom: 0.2rem;
+  }
+  
+  .city {
+    font-weight: 500;
+  }
+  
+  .duration {
+    text-align: center;
+    flex: 2;
+  }
+  
+  .duration-time {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+  
+  .duration-line {
+    height: 2px;
+    background-color: var(--border-color);
+    position: relative;
+  }
+  
+  .duration-line::before,
+  .duration-line::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    top: -3px;
+  }
+  
+  .duration-line::before {
+    left: 0;
+  }
+  
+  .duration-line::after {
+    right: 0;
+  }
+  
+  .train-carriages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .carriage-option {
+    flex: 1;
+    min-width: 150px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .carriage-type {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  
+  .carriage-seats, .carriage-price {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .select-btn {
+    margin-top: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .train-route {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .departure, .arrival {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .duration {
+      width: 100%;
+    }
+  }

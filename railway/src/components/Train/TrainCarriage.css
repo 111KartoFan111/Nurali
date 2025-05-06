@@ -1,0 +1,211 @@
+.train-carriage {
+    margin-bottom: 2rem;
+  }
+  
+  .carriage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .carriage-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+  }
+  
+  .legend-toggle {
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+  }
+  
+  .legend-toggle:hover {
+    background-color: var(--primary-color-light);
+  }
+  
+  .carriage-info {
+    margin-bottom: 1rem;
+  }
+  
+  .carriage-info p {
+    margin: 0.2rem 0;
+    color: #666;
+  }
+  
+  /* Схема легенды */
+  .scheme-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+  }
+  
+  .legend-color.free {
+    background-color: #d1e7dd;
+    border: 1px solid #badbcc;
+  }
+  
+  .legend-color.booked {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .legend-color.selected {
+    background-color: #cce5ff;
+    border: 1px solid #b8daff;
+  }
+  
+  /* Схемы вагонов */
+  .carriage-scheme {
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 4px;
+  }
+  
+  /* Плацкарт */
+  .placart-scheme .scheme-compartments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .placart-compartment {
+    display: flex;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+  
+  .placart-compartment:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  .main-seats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.5rem;
+    margin-right: 1rem;
+    flex: 3;
+  }
+  
+  .side-seats {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.5rem;
+    flex: 1;
+    border-left: 1px dashed var(--border-color);
+    padding-left: 0.5rem;
+  }
+  
+  /* Купе */
+  .coupe-scheme .scheme-compartments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .coupe-compartment {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+  
+  .coupe-compartment:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  /* Люкс */
+  .luxury-scheme .scheme-compartments {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .luxury-compartment {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+  
+  .luxury-compartment:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  /* Места */
+  .seat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .seat.free {
+    background-color: #d1e7dd;
+    border: 1px solid #badbcc;
+  }
+  
+  .seat.free:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .seat.booked, .seat.sold, .seat.unknown {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+  
+  .seat.selected {
+    background-color: #cce5ff;
+    border: 1px solid #b8daff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .seat-number {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  
+  .seat-price {
+    font-size: 0.8rem;
+    color: #666;
+  }

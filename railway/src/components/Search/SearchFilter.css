@@ -1,0 +1,35 @@
+.search-filters {
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+  }
+  
+  .filters-title {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+  }
+  
+  .filter-group {
+    margin-bottom: 1.2rem;
+  }
+  
+  .filter-group:last-child {
+    margin-bottom: 0;
+  }
+  
+  .filter-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  @media (max-width: 768px) {
+    .search-filters {
+      margin-bottom: 1.5rem;
+    }
+  }
